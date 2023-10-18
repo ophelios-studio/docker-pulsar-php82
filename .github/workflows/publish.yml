@@ -15,6 +15,5 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the Docker image
         run: |
-          docker build . --tag ghcr.io/ophelios-studio/docker-pulsar-php82:latest
-          docker run ghcr.io/ophelios-studio/docker-pulsar-php82:latest
+          docker build . --tag ghcr.io/ophelios-studio/docker-pulsar-php82:latest          
           docker push ghcr.io/ophelios-studio/docker-pulsar-php82:latest
