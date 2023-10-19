@@ -1,10 +1,17 @@
-FROM php:8.2-apache-bullseye
+FROM php:8.2-apache-bookworm
 
 # Install utilities and libraries
 RUN apt-get update && apt-get install -y \
-    apt-utils wget build-essential cron git curl zip openssl dialog locales \
+    apt-utils gnupg lsb-release ca-certificates wget build-essential cron git curl zip openssl dialog locales \
     libonig-dev libcurl4 libcurl4-openssl-dev libsqlite3-dev libsqlite3-0 zlib1g-dev libzip-dev libpq-dev libicu-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev libxml2-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Docker cli
+RUN mkdir -p /etc/apt/keyrings
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN apt-get update
+RUN apt-get install -y docker-ce-cli
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -32,6 +39,10 @@ RUN docker-php-ext-install pdo_pgsql && \
     docker-php-ext-install exif && \
     docker-php-ext-install gettext
 
+# Install Browscap (for browser detection)
+RUN mkdir -p /usr/local/etc/php/extra/
+RUN curl "http://browscap.org/stream?q=Lite_PHP_BrowsCapINI" -o /usr/local/etc/php/extra/lite_php_browscap.ini
+
 # Install ssh2
 RUN apt-get update
 RUN apt-get install -y git libssh2-1 libssh2-1-dev
@@ -47,11 +58,33 @@ ENV LANG fr_CA.UTF-8
 ENV LANGUAGE fr_CA.UTF-8
 ENV LC_ALL fr_CA.UTF-8
 
+# Crontab
+COPY cronjobs /etc/cron.d/cron
+RUN chmod 0644 /etc/cron.d/cron && \
+    crontab /etc/cron.d/cron && \
+    mkdir -p /var/log/cron && \
+    sed -i 's/^exec /service cron start\n\nexec /' /usr/local/bin/apache2-foreground
+
 # Install cleanup
 RUN rm -rf /usr/src/*
 
-# Set global server name (avoid console warnings)
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
 # Timezone
 ENV TZ "America/Montreal"
+
+# Duplicity
+RUN apt-get -y install duplicity
+
+# Rclone
+RUN apt-get -y install rclone
+
+# Prepare sudo for Docker command
+RUN apt-get install sudo -y
+RUN adduser --disabled-password \
+--gecos '' docker
+RUN adduser docker sudo
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> \
+/etc/sudoers
+USER docker
+
+# Copy specific php.ini directives
+COPY custom.ini /usr/local/etc/php/conf.d/base-custom.ini
