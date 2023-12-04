@@ -8,7 +8,6 @@ simplement faire un _push_ sur la branche principale.
 ## Définitions
 
 * PHP 8.2 (Apache-Bookworm)
-* Docker CLI
 * Composer
 * XDebug
 * Browscap (lite)
@@ -17,6 +16,7 @@ simplement faire un _push_ sur la branche principale.
 * RClone
 * Sudo (for Docker)
 * SSH2
+* MailCatcher
 * Extensions PHP
   * pdo_pgsql
   * pgsql
@@ -33,6 +33,7 @@ simplement faire un _push_ sur la branche principale.
   * rewrite
   * headers
   * expires
+  * ssl
 
 ## Directives personnalisées pour PHP.ini
 
