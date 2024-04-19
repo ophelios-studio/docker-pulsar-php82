@@ -16,4 +16,4 @@ jobs:
       - name: Build the Docker image
         run: |
           docker buildx create --use
-          docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v8 --tag ghcr.io/ophelios-studio/docker-pulsar-php82:latest --push .
+          docker buildx build --platform linux/arm64,linux/amd64 --tag ghcr.io/ophelios-studio/docker-pulsar-php82:latest --push .
