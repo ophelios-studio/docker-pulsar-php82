@@ -9,9 +9,9 @@ RUN apt-get update && apt-get install -y \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install xdebug
-RUN pecl install xdebug
-RUN docker-php-ext-enable xdebug
+# Install xdebug (should be done in project level if needed, because it can cause significant slowdowns)
+#RUN pecl install xdebug
+#RUN docker-php-ext-enable xdebug
 
 # Install APCu PHP extension
 RUN pecl install apcu
