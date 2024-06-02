@@ -42,6 +42,13 @@ RUN apt-get install -y git libssh2-1 libssh2-1-dev
 RUN pecl install ssh2-1.3.1
 RUN docker-php-ext-enable ssh2
 
+# Install PCNTL (multithreading, useful for Phug caching)
+RUN docker-php-ext-install pcntl
+
+# Xdebug install (not recommanded because of performance issues)
+#RUN pecl install xdebug
+#RUN docker-php-ext-enable xdebug
+
 # Enable apache modules
 RUN a2enmod rewrite headers expires ssl
 
