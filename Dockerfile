@@ -9,10 +9,6 @@ RUN apt-get update && apt-get install -y \
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install xdebug (should be done in project level if needed, because it can cause significant slowdowns)
-#RUN pecl install xdebug
-#RUN docker-php-ext-enable xdebug
-
 # Install APCu PHP extension
 RUN pecl install apcu
 RUN docker-php-ext-enable apcu --ini-name docker-php-ext-apcu.ini
@@ -45,9 +41,10 @@ RUN docker-php-ext-enable ssh2
 # Install PCNTL (multithreading, useful for Phug caching)
 RUN docker-php-ext-install pcntl
 
-# Xdebug install (not recommanded because of performance issues)
-#RUN pecl install xdebug
-#RUN docker-php-ext-enable xdebug
+# Install xdebug (but do not activate it)
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+RUN cd /usr/local/etc/php/ && mkdir -p disabled/ && mv conf.d/docker-php-ext-xdebug.ini disabled/
 
 # Enable apache modules
 RUN a2enmod rewrite headers expires ssl
