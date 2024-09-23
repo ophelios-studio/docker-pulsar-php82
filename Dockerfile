@@ -53,10 +53,10 @@ RUN a2enmod rewrite headers expires ssl
 RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
 
 # Install french language locale
-RUN localedef -i fr_CA -c -f UTF-8 -A /usr/share/locale/locale.alias fr_CA.UTF-8
-ENV LANG fr_CA.UTF-8
-ENV LANGUAGE fr_CA.UTF-8
-ENV LC_ALL fr_CA.UTF-8
+RUN locale-gen en_CA.UTF-8
+RUN locale-gen fr_CA.UTF-8
+RUN update-locale
+#RUN localedef -i fr_CA -c -f UTF-8 -A /usr/share/locale/locale.alias fr_CA.UTF-8
 
 # Crontab
 COPY cronjobs /etc/cron.d/cron

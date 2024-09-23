@@ -40,9 +40,6 @@ simplement faire un _push_ sur la branche principale.
 ```ini
 apc.enable_cli = 1
 
-[browscap]
-browscap = '/usr/local/etc/php/extra/lite_php_browscap.ini'
-
 [xdebug]
 xdebug.output_dir='/xdebug.d'
 xdebug.mode = profile
